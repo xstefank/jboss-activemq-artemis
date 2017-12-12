@@ -324,6 +324,45 @@ public class JMSBridgeReconnectionTest extends BridgeTestBase {
       }
    }
 
+   @Test
+   public void testJBEAP11184() throws Exception {
+      cff1xa = new ConnectionFactoryFactory() {
+         @Override
+         public Object createConnectionFactory() throws Exception {
+            ActiveMQXAConnectionFactory cf = (ActiveMQXAConnectionFactory) ActiveMQJMSClient.createConnectionFactoryWithHA(JMSFactoryType.XA_CF, new TransportConfiguration(INVM_CONNECTOR_FACTORY, params1));
+
+            cf.setReconnectAttempts(-1);
+            cf.setCallFailoverTimeout(-1);
+            cf.setBlockOnNonDurableSend(true);
+            cf.setBlockOnDurableSend(true);
+            cf.setCacheLargeMessagesClient(true);
+
+            return cf;
+         }
+
+      };
+
+      JMSBridgeImpl bridge = new JMSBridgeImpl(cff0xa, cff1xa, sourceQueueFactory, targetQueueFactory, null, null, null, null, null, 1000, -1, QualityOfServiceMode.ONCE_AND_ONLY_ONCE, 10, 5000, null, null, false).setBridgeName("test-bridge");
+      addActiveMQComponent(bridge);
+      bridge.setTransactionManager(newTransactionManager());
+
+      bridge.start();
+
+      // Now crash the dest server
+
+      JMSBridgeReconnectionTest.log.info("About to crash server");
+
+      jmsServer1.stop();
+
+      // Now stop the bridge while the failover is happening
+
+      JMSBridgeReconnectionTest.log.info("About to stop the bridge");
+
+      bridge.stop();
+
+      
+   }
+
    private class DummyTransaction implements Transaction {
 
       boolean rolledback = false;
