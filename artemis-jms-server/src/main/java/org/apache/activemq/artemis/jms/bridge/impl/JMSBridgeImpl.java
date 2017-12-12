@@ -498,6 +498,8 @@ public final class JMSBridgeImpl implements JMSBridge {
                ActiveMQJMSBridgeLogger.LOGGER.trace("Rolling back remaining tx");
             }
 
+            stopSessionFailover();
+
             try {
                tx.rollback();
                abortedMessageCount += messages.size();
@@ -534,6 +536,14 @@ public final class JMSBridgeImpl implements JMSBridge {
             ActiveMQJMSBridgeLogger.LOGGER.trace("Stopped " + this);
          }
       }
+   }
+
+   private void stopSessionFailover() {
+      XASession xaSource = (XASession) sourceSession;
+      XASession xaTarget = (XASession) targetSession;
+
+      ((ClientSessionInternal) xaSource.getXAResource()).getSessionContext().releaseCommunications();
+      ((ClientSessionInternal) xaTarget.getXAResource()).getSessionContext().releaseCommunications();
    }
 
    @Override

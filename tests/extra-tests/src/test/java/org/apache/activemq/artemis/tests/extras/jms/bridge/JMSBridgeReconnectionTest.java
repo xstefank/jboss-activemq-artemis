@@ -35,7 +35,9 @@ import org.apache.activemq.artemis.jms.client.ActiveMQXAConnectionFactory;
 import org.apache.activemq.artemis.tests.integration.IntegrationTestLogger;
 import org.apache.activemq.artemis.tests.integration.ra.DummyTransactionManager;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 public class JMSBridgeReconnectionTest extends BridgeTestBase {
 
@@ -324,6 +326,9 @@ public class JMSBridgeReconnectionTest extends BridgeTestBase {
       }
    }
 
+   @Rule
+   public Timeout timeout = new Timeout(120000);
+
    @Test
    public void testJBEAP11184() throws Exception {
       cff1xa = new ConnectionFactoryFactory() {
@@ -333,6 +338,7 @@ public class JMSBridgeReconnectionTest extends BridgeTestBase {
 
             cf.setReconnectAttempts(-1);
             cf.setCallFailoverTimeout(-1);
+            cf.setCallTimeout(10000);
             cf.setBlockOnNonDurableSend(true);
             cf.setBlockOnDurableSend(true);
             cf.setCacheLargeMessagesClient(true);
@@ -360,7 +366,9 @@ public class JMSBridgeReconnectionTest extends BridgeTestBase {
 
       bridge.stop();
 
-      
+      // Shutdown the source server
+
+      jmsServer0.stop();
    }
 
    private class DummyTransaction implements Transaction {
