@@ -27,11 +27,13 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.activemq.artemis.api.config.ActiveMQDefaultConfiguration;
 import org.apache.activemq.artemis.api.core.ActiveMQBuffer;
 import org.apache.activemq.artemis.api.core.ActiveMQBuffers;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.apache.activemq.artemis.api.core.ActiveMQExceptionType;
 import org.apache.activemq.artemis.api.core.Message;
+import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientConsumer;
 import org.apache.activemq.artemis.api.core.client.ClientMessage;
@@ -276,6 +278,41 @@ public final class ClientSessionImpl implements ClientSessionInternal, FailureLi
          endCall();
       }
 
+   }
+
+   /**
+    * Creates a <em>non-temporary</em> queue.
+    *
+    * @param address      the queue will be bound to this address
+    * @param routingType the delivery mode for this queue, MULTICAST or ANYCAST
+    * @param queueName    the name of the queue
+    * @param durable      whether the queue is durable or not
+    * @throws ActiveMQException in an exception occurs while creating the queue
+    */
+   @Override
+   public void createQueue(String address, RoutingType routingType, String queueName, boolean durable) throws ActiveMQException {
+      createQueue(SimpleString.toSimpleString(address), routingType, SimpleString.toSimpleString(queueName), durable);
+   }
+
+   /**
+    * Creates a <em>non-temporary</em> queue.
+    *
+    * @param address      the queue will be bound to this address
+    * @param routingType the delivery mode for this queue, MULTICAST or ANYCAST
+    * @param queueName    the name of the queue
+    * @param durable      whether the queue is durable or not
+    * @throws ActiveMQException in an exception occurs while creating the queue
+    */
+   @Override
+   public void createQueue(SimpleString address, RoutingType routingType, SimpleString queueName, boolean durable) throws ActiveMQException {
+      internalCreateQueue(address,
+              queueName, routingType,
+              null,
+              durable,
+              false,
+              ActiveMQDefaultConfiguration.getDefaultMaxQueueConsumers(),
+              ActiveMQDefaultConfiguration.getDefaultPurgeOnNoConsumers(),
+              false, null, null);
    }
 
    @Override

@@ -465,6 +465,10 @@ public final class ActiveMQDefaultConfiguration {
 
    public static final int DEFAULT_DISK_SCAN = 5000;
 
+   public static final int DEFAULT_MAX_QUEUE_CONSUMERS = -1;
+
+   public static final boolean DEFAULT_PURGE_ON_NO_CONSUMERS = false;   
+
    public static final String DEFAULT_SYSTEM_PROPERTY_PREFIX = "brokerconfig.";
 
    public static String DEFAULT_NETWORK_CHECK_LIST = null;
@@ -1259,6 +1263,14 @@ public final class ActiveMQDefaultConfiguration {
 
    public static int getDefaultDiskScanPeriod() {
       return DEFAULT_DISK_SCAN;
+   }
+
+   public static int getDefaultMaxQueueConsumers() {
+      return DEFAULT_MAX_QUEUE_CONSUMERS;
+   }
+
+   public static boolean getDefaultPurgeOnNoConsumers() {
+      return DEFAULT_PURGE_ON_NO_CONSUMERS;
    }
 
    public static String getDefaultSystemPropertyPrefix() {

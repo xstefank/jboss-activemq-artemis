@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.activemq.artemis.api.core.ActiveMQBuffer;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientConsumer;
 import org.apache.activemq.artemis.api.core.client.ClientMessage;
@@ -813,6 +814,20 @@ public class MessageHeaderTest extends MessageHeaderTestBase {
                                     SimpleString queueName,
                                     SimpleString filter,
                                     boolean durable) throws ActiveMQException {
+      }
+
+      /**
+       * Creates a <em>non-temporary</em> queue.
+       *
+       * @param address     the queue will be bound to this address
+       * @param routingType the delivery mode for this queue, MULTICAST or ANYCAST
+       * @param queueName   the name of the queue
+       * @param durable     whether the queue is durable or not
+       * @throws ActiveMQException in an exception occurs while creating the queue
+       */
+      @Override
+      public void createQueue(String address, RoutingType routingType, String queueName, boolean durable) throws ActiveMQException {
+
       }
 
       @Override
